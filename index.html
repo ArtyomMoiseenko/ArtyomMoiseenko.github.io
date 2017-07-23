@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Calendar &bullet; 0.0.1</title>
+		<meta charset="utf-8">
+		<meta http-equiv="x-ua-compatible" content="ie=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<!-- MomentJS -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js"></script>
+		<!-- Lodash -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+		<!-- jQuery -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<!-- Semantic UI -->
+		<link href="http://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.11/semantic.css" rel="stylesheet">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.11/semantic.min.js"></script>
+		<!-- Lato -->
+		<link href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i&amp;subset=latin-ext" rel="stylesheet">
+		<!-- OpenSans -->
+		<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i&amp;subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese" rel="stylesheet">
+		<!-- Calendar style-->
+		<link rel="stylesheet" href="../css/calendar.css">
+	</head>
+	<body>
+		<div id="calendar"></div>
+		<div class="ui modal">
+		  <i class="close icon"></i>
+		  <div class="header">Your event!</div>
+		  <div class="participants"></div>
+		  <div class="image content">
+			<div class="ui medium image">
+			  <img class="ui medium circular image" src="../images/account_avatar.jpg">
+			</div>
+			<div class="description">Description of event</div>
+		  </div>
+		  <div class="actions">
+			<button class="positive ui button">OK</button>
+		  </div>
+		</div>
+		<script>
+			/* Calendar */
+			class Calendar {
+				constructor(element, locale) {
+					this.element = element;
+					this.locale = locale;
+					this.data = [{
+						date: "2017-07-20",
+						eventId: 0,
+						event: "Come up with a homework idea",
+						description: "Well, yeah, you know. You've got to engage the audience, inspire them to do something if not great than warm at least. Something you'll be glad to check on later."
+					  },
+					  {
+						date: "2017-07-22",
+						eventId: 0,
+						event: "Parents birthday",
+						description: "Yeah, both of them. Mom wanted a new bag — have no idea where to get one. Zara? Will see. Anyway, yeah, both of them, same day. Have to check those homeworks though."
+					  },
+					  {
+						date: "2017-07-23",
+						eventId: 1,
+						event: "Friends party",
+						description: "Go see some friends since you're visiting Ternopil, grab some beer, talk about life and how everything is shit.",
+						participants: [{
+							name: "Volodymyr Stoyko",
+							url: "https://www.facebook.com/corest",
+							avatar: "https://scontent-cdt1-1.xx.fbcdn.net/v/t1.0-9/19959082_10210721389766187_6789533543778955899_n.jpg?oh=204032e8f826891d02c566e5cdcdf384&oe=59C40BCC"
+						},
+						{
+							name: "Volodymyr Hrabar",
+							url: "https://uk-ua.facebook.com/volodymyr.hrabar",
+							avatar: "https://scontent.fhen1-1.fna.fbcdn.net/v/t31.0-8/c0.0.851.315/p851x315/468539_404943446231685_402154612_o.jpg?oh=06ccab44ba9f17d4f6cb6b86e90d304b&oe=5A00703F"
+						}]
+					  },
+					  					  {
+						date: "2017-08-01",
+						eventId: 1,
+						event: "Football",
+						description: "We'll go the football game.",
+						participants: [{
+							name: "Volodymyr Stoyko",
+							url: "https://www.facebook.com/corest",
+							avatar: "https://scontent-cdt1-1.xx.fbcdn.net/v/t1.0-9/19959082_10210721389766187_6789533543778955899_n.jpg?oh=204032e8f826891d02c566e5cdcdf384&oe=59C40BCC"
+						},
+						{
+							name: "Volodymyr Hrabar",
+							url: "https://uk-ua.facebook.com/volodymyr.hrabar",
+							avatar: "https://scontent.fhen1-1.fna.fbcdn.net/v/t31.0-8/c0.0.851.315/p851x315/468539_404943446231685_402154612_o.jpg?oh=06ccab44ba9f17d4f6cb6b86e90d304b&oe=5A00703F"
+						}]
+					  }
+					];
+					moment.locale(locale);
+					this.show(moment().year());
+				}
+
+				show(year) {
+					this.year = year;
+					var m, d1, t = [], y = '', w = 0, r = 0, n = _.reduce(moment.weekdaysShort(), function(n, ddd) { return n += '<div class="ddd" data-ddd="' + ddd + '"></div>'; }, '');
+					for (m = 0; m <= 11; m++) {
+						d1 = moment([year, m, 1]);
+						t.push('<div class="MMMM">' + moment.months()[m] + '</div>' + n + '<div class="MM"><a href="#" class="' + (year == moment().year() && m == moment().month() && 1 == moment().date() ? 'active ' : '') + 'D" data-d="' + d1.day() + '" data-date="' + year + '-' + ('00' + (m + 1)).slice(-2) + '-01" draggable="false"><span class="num">1</span><div class="content"></div></a>' + _.range(2, d1.daysInMonth() + 1).reduce(function(MM, d) { return MM += '<a href="#" class="' + (year == moment().year() && m == moment().month() && d == moment().date() ? 'active ' : '') + 'D" data-date="' + year + '-' + ('00' + (m + 1)).slice(-2) + '-' + ('00' + d).slice(-2) + '" draggable="false">' + '<span class="num">' + d + '</span>' + '<div class="content"></div></a>'; }, '') + '</div>');
+						w = Math.max(w, Math.ceil((d1.day() + d1.daysInMonth()) / 7));
+						if (m == 3 || m == 7 || m == 11) {
+							y += '<div class="M" data-w="' + w + '">' + t.join('</div><div class="M" data-w="' + w + '">') + '</div>';
+							r += w;
+							w = 0;
+							t = [];
+						}
+					}
+					this.element.innerHTML = '<nav><a href="#" class="nav prev" draggable="false"><svg viewBox="0 0 512 512"><path d="M189.8,349.7c3.1-3.1,3-8,0-11.3L123.4,264H408c4.4,0,8-3.6,8-8c0-4.4-3.6-8-8-8H123.4l66.3-74.4c2.9-3.4,3.2-8.1,0.1-11.2c-3.1-3.1-8.5-3.3-11.4-0.1c0,0-79.2,87-80,88S96,253.1,96,256s1.6,4.9,2.4,5.7s80,88,80,88c1.5,1.5,3.6,2.3,5.7,2.3C186.2,352,188.2,351.2,189.8,349.7z"/></svg></a><div class="title"><strong>' + year + '</strong></div><a href="#" class="nav next" draggable="false"><svg viewBox="0 0 512 512"><path d="M322.2,349.7c-3.1-3.1-3-8,0-11.3l66.4-74.4H104c-4.4,0-8-3.6-8-8c0-4.4,3.6-8,8-8h284.6l-66.3-74.4c-2.9-3.4-3.2-8.1-0.1-11.2c3.1-3.1,8.5-3.3,11.4-0.1c0,0,79.2,87,80,88s2.4,2.8,2.4,5.7s-1.6,4.9-2.4,5.7s-80,88-80,88c-1.5,1.5-3.6,2.3-5.7,2.3C325.8,352,323.8,351.2,322.2,349.7z"/></svg></a></nav><div class="YYYY" data-w="' + r + '">' + y + '</div>';
+					this.element.querySelector('.prev').addEventListener('click', () => { this.show(--this.year); Event(this);});
+					this.element.querySelector('.next').addEventListener('click', () => { this.show(++this.year); Event(this);});
+				}
+			}
+
+			var calendar = new Calendar(document.getElementById('calendar'), 'en');
+			Event(calendar);
+			
+			function Event(calendar){
+				var dates = $('.D');
+				for(var i = 0; i < dates.length; i++){
+					for(var j = 0; j < calendar.data.length; j++){
+						if(dates[i].getAttribute("data-date") == calendar.data[j].date){
+							if($(dates[i]).find(".hover").length == 0){
+								$(dates[i]).find(".content").html("<div class='hover event' data-content='" + calendar.data[j].event + "'><i class='star icon'></i></div>");
+								$(dates[i]).on("click", function(){
+									$('.ui.modal').modal({detachable: true}).modal('show');
+									$('.participants').empty();
+									for(var k = 0; k < calendar.data.length; k++){
+										if($(this)[0].getAttribute("data-date") == calendar.data[k].date){
+											$('.ui.modal .header').html(calendar.data[k].event + "!");
+											$('.ui.modal .description').html(calendar.data[k].description);
+											if(calendar.data[k].participants != undefined){
+												for(var l = 0; l < calendar.data[k].participants.length; l++){
+													$('.participants').append("<img src='" + calendar.data[k].participants[l].avatar + "' data-title='" + calendar.data[k].participants[l].name + "' class='ui avatar image'>");										
+												}
+											}
+										}
+									}
+								});
+							}
+						}
+					}
+				}
+			}
+			$('.hover').popup({
+				position: 'top center'
+			});
+			$('.ui.avatar.image').popup();
+		</script>
+	</body>
+</html>
